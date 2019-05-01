@@ -22,11 +22,13 @@ class MainActivity : AppCompatActivity() {
     private var tts_french: TTS? = null
     private var tts_german: TTS? = null
     private var tts_spanish: TTS? = null
+    public var tts_language: TTS? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        /*
         // Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
 
@@ -39,12 +41,22 @@ class MainActivity : AppCompatActivity() {
         // Indicates this device's details have changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
 
+        manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+        channel = manager.initialize(this, mainLooper, null)
+        */
+
         audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         tts_english = TTS(this, "en", "GB")
         tts_french = TTS(this, "fr", "FR")
         tts_spanish = TTS(this, "es", "ES")
         tts_german = TTS(this, "de", "DE")
+        tts_language = tts_english
 
+        playImageButton.setOnClickListener{
+            tts_language!!.speak(textToSay.text.toString())
+        }
+
+        /*
         button_english.setOnClickListener{
             tts_english!!.speak(textToSay.text.toString())
         }
@@ -57,9 +69,7 @@ class MainActivity : AppCompatActivity() {
         button_german.setOnClickListener{
             tts_german!!.speak(textToSay.text.toString())
         }
-
-        manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
-        channel = manager.initialize(this, mainLooper, null)
+        */
     }
 
     public override fun onDestroy() {
