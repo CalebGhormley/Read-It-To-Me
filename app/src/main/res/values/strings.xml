@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Read It To Me</string>
-    <string name="button_britain">English</string>
-    <string name="button_french">French</string>
-    <string name="button_spanish">Spanish</string>
-    <string name="button_german">German</string>
+    <string name="button_save">Save</string>
+    <string name="button_load">Load</string>
+    <string name="button_fetch">Fetch</string>
+    <string name="button_voice">Voice</string>
+    <string name="button_language">Language</string>
+    <string name="button_translate">Translate</string>
 
     <string name="hint_text">Text to say</string>
     <string name="doubleBackToExit">Press the back button again to exit.</string>
