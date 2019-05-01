@@ -7,8 +7,9 @@
     <color name="colorText">#000000</color>
     <color name="colorTextButton">#F5F5F5</color>
 
-    <color name="colorButtonBritain">#3f51b5</color>
-    <color name="colorButtonUS">#f44336</color>
-    <color name="colorButtonIndia">#ff9800</color>
-    <color name="colorButtonAustralia">#3f51b5</color>
+    <color name="colorButtonSkip">#3f51b5</color>
+    <color name="colorButtonPlay">#34e336</color>
+    <color name="colorButtonStop">#ff2200</color>
+    <color name="colorButtonRecord">#dd35ee</color>
+    <color name="colorButtonPause">#ddee35</color>
 </resources>
