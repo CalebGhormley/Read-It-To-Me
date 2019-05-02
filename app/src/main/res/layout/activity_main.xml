@@ -73,57 +73,50 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_skip_back"
             android:id="@+id/skipBackImageButton"
-            android:background="@color/colorButtonSkip"
-            app:layout_constraintEnd_toStartOf="@+id/referenceTopLeft" android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/referenceTopLeft"
-            android:padding="10dp" android:saveEnabled="false" android:scaleX="2" android:scaleY="2"/>
+            android:background="@drawable/skip_button_round"
+            app:layout_constraintEnd_toStartOf="@+id/referenceTopLeft" android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp" app:layout_constraintBottom_toTopOf="@+id/referenceTopLeft"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_skip_forward"
             android:id="@+id/skipForwardImageButton"
-            android:background="@color/colorButtonSkip"
-            android:layout_marginBottom="8dp"
+            android:background="@drawable/skip_button_round"
+            android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toTopOf="@+id/referenceTopRight"
-            app:layout_constraintStart_toEndOf="@+id/referenceTopRight" android:layout_marginStart="8dp"
-            android:padding="10dp" android:scaleX="2" android:scaleY="2"/>
+            app:layout_constraintStart_toEndOf="@+id/referenceTopRight" android:layout_marginStart="0dp"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_play"
             android:id="@+id/playImageButton"
-            android:background="@color/colorButtonPlay"
+            android:background="@drawable/play_button_round"
             app:layout_constraintBottom_toTopOf="@+id/referenceTopRight"
             app:layout_constraintStart_toEndOf="@+id/skipBackImageButton"
             app:layout_constraintEnd_toStartOf="@+id/skipForwardImageButton" android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp" android:layout_marginEnd="8dp"
-            android:padding="10dp" android:scaleX="2" android:scaleY="2"/>
+            android:layout_marginBottom="0dp" android:layout_marginEnd="0dp"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_pause"
             android:id="@+id/pauseImageButton"
-            android:background="@color/colorButtonPause"
-            android:layout_marginTop="8dp"
+            android:background="@drawable/pause_button_round"
+            android:layout_marginTop="0dp"
             app:layout_constraintTop_toBottomOf="@+id/referenceTopLeft" android:layout_marginStart="8dp"
             app:layout_constraintStart_toEndOf="@+id/stopImageButton"
-            app:layout_constraintEnd_toStartOf="@+id/recordImageButton" android:layout_marginEnd="8dp"
-            android:padding="10dp" android:scaleX="2" android:scaleY="2"/>
+            app:layout_constraintEnd_toStartOf="@+id/recordImageButton" android:layout_marginEnd="8dp"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_stop"
             android:id="@+id/stopImageButton"
-            android:background="@color/colorButtonStop"
+            android:background="@drawable/stop_button_round"
             app:layout_constraintEnd_toStartOf="@+id/referenceTopLeft"
-            android:layout_marginEnd="8dp" app:layout_constraintTop_toBottomOf="@+id/referenceTopLeft"
-            android:layout_marginTop="8dp"
-            android:padding="10dp" android:scaleX="2" android:scaleY="2"/>
+            android:layout_marginEnd="0dp" app:layout_constraintTop_toBottomOf="@+id/referenceTopLeft"
+            android:layout_marginTop="0dp"/>
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_record"
             android:id="@+id/recordImageButton"
-            android:background="@color/colorButtonRecord"
-            android:layout_marginTop="8dp"
+            android:background="@drawable/record_button_round"
             app:layout_constraintTop_toBottomOf="@+id/referenceTopRight"
-            app:layout_constraintStart_toEndOf="@+id/referenceTopRight" android:layout_marginStart="8dp"
-            android:padding="10dp" android:scaleX="2" android:scaleY="2"/>
+            app:layout_constraintStart_toEndOf="@+id/referenceTopRight"/>
     <Button
             android:text="@string/button_save"
             android:layout_width="110dp"

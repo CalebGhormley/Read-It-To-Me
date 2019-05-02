@@ -9,4 +9,5 @@
 
     <string name="hint_text">Text to say</string>
     <string name="doubleBackToExit">Press the back button again to exit.</string>
+    <string name="title_activity_fetch">FetchActivity</string>
 </resources>

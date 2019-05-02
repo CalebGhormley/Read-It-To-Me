@@ -1,6 +1,7 @@
 package com.example.readittome
 
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.net.wifi.p2p.WifiP2pManager
@@ -23,10 +24,14 @@ class MainActivity : AppCompatActivity() {
     private var tts_german: TTS? = null
     private var tts_spanish: TTS? = null
     public var tts_language: TTS? = null
+    public var textToBeSaid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        textToBeSaid = intent.getStringExtra("textToBeSaid")
+        if(textToBeSaid != null && textToBeSaid!!.isNotEmpty())textToSay.text.insert(0, textToBeSaid)
 
         /*
         // Indicates a change in the Wi-Fi P2P status.
@@ -54,6 +59,14 @@ class MainActivity : AppCompatActivity() {
 
         playImageButton.setOnClickListener{
             tts_language!!.speak(textToSay.text.toString())
+        }
+
+
+
+        fetchButton.setOnClickListener{
+            val intent = Intent(this, FetchActivity::class.java)
+            intent.putExtra("textToBeSaid", textToBeSaid)
+            startActivity(intent)
         }
 
         /*
