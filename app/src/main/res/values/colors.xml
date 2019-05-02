@@ -7,9 +7,9 @@
     <color name="colorText">#000000</color>
     <color name="colorTextButton">#F5F5F5</color>
 
-    <color name="colorButtonSkip">#3f51b5</color>
-    <color name="colorButtonPlay">#34e336</color>
-    <color name="colorButtonStop">#ff2200</color>
-    <color name="colorButtonRecord">#dd35ee</color>
-    <color name="colorButtonPause">#ddee35</color>
+    <color name="colorButtonSkip">#223399</color>
+    <color name="colorButtonPlay">#229933</color>
+    <color name="colorButtonStop">#992233</color>
+    <color name="colorButtonRecord">#882288</color>
+    <color name="colorButtonPause">#C7B226</color>
 </resources>
