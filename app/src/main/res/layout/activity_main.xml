@@ -126,48 +126,52 @@
             android:id="@+id/saveButton" app:layout_constraintEnd_toStartOf="@+id/referenceBottomLeft"
             app:layout_constraintBottom_toTopOf="@+id/referenceBottomLeft"/>
     <Button
-            android:text="@string/button_fetch"
+            android:text="@string/button_send"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/fetchButton" app:layout_constraintStart_toEndOf="@+id/referenceBottomRight"
-            app:layout_constraintBottom_toTopOf="@+id/referenceBottomRight"/>
+            android:id="@+id/sendButton"
+            app:layout_constraintBottom_toTopOf="@+id/referenceBottomLeft"
+            app:layout_constraintStart_toEndOf="@+id/saveButton"
+            app:layout_constraintEnd_toStartOf="@+id/voiceButton"/>
     <Button
             android:text="@string/button_load"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/loadButton" app:layout_constraintEnd_toStartOf="@+id/fetchButton"
-            app:layout_constraintStart_toEndOf="@+id/saveButton"
-            app:layout_constraintBottom_toTopOf="@+id/referenceBottomLeft"/>
+            android:id="@+id/loadButton"
+            app:layout_constraintTop_toBottomOf="@+id/referenceBottomLeft"
+            app:layout_constraintEnd_toStartOf="@+id/referenceBottomLeft"/>
     <Button
             android:text="@string/button_voice"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/voiceButton" app:layout_constraintEnd_toStartOf="@+id/referenceBottomLeft"
-            app:layout_constraintTop_toBottomOf="@+id/referenceBottomLeft"/>
+            android:id="@+id/voiceButton"
+            app:layout_constraintStart_toEndOf="@+id/referenceBottomRight"
+            app:layout_constraintBottom_toTopOf="@+id/referenceBottomRight"/>
     <Button
-            android:text="@string/button_translate"
+            android:text="@string/button_recieve"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/translateButton"
-            app:layout_constraintTop_toBottomOf="@+id/referenceBottomRight"
-            app:layout_constraintStart_toEndOf="@+id/referenceBottomRight"/>
+            android:id="@+id/recieveButton"
+            app:layout_constraintTop_toBottomOf="@+id/referenceBottomLeft"
+            app:layout_constraintEnd_toStartOf="@+id/languageButton"
+            app:layout_constraintStart_toEndOf="@+id/loadButton"/>
     <Button
             android:text="@string/button_language"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/languageButton" app:layout_constraintEnd_toStartOf="@+id/translateButton"
-            app:layout_constraintStart_toEndOf="@+id/voiceButton"
-            app:layout_constraintTop_toBottomOf="@+id/referenceBottomRight"/>
+            android:id="@+id/languageButton"
+            app:layout_constraintTop_toBottomOf="@+id/referenceBottomRight"
+            app:layout_constraintStart_toEndOf="@+id/referenceBottomRight"/>
 
 
 </android.support.constraint.ConstraintLayout>

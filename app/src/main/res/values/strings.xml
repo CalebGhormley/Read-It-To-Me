@@ -2,12 +2,13 @@
     <string name="app_name">Read It To Me</string>
     <string name="button_save">Save</string>
     <string name="button_load">Load</string>
-    <string name="button_fetch">Fetch</string>
+    <string name="button_send">Send</string>
+    <string name="button_recieve">Recieve</string>
     <string name="button_voice">Voice</string>
     <string name="button_language">Language</string>
-    <string name="button_translate">Translate</string>
 
     <string name="hint_text">Text to say</string>
     <string name="doubleBackToExit">Press the back button again to exit.</string>
+    <string name="networkRequired">Network Connection Required.</string>
     <string name="title_activity_fetch">FetchActivity</string>
 </resources>
