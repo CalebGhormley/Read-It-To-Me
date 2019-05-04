@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var manager: WifiP2pManager
     private var doubleBackToExitPressedOnce: Boolean? = false
     private var audio: AudioManager? = null
-    private var tts_language: TTS? = null
+    private var tts: TTS? = null
     private var languageList: ArrayList<TTS> = ArrayList()
     private var list: ArrayList<TextObj> = ArrayList()
     private var langCode: String = ""
@@ -44,10 +44,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var currentTitle: String = ""
     private var playing: Boolean = false
     private var speed: Float = 1.0F
+    private var size = 0
     private val mProgressListener = object : UtteranceProgressListener() {
         override fun onStart(utteranceId: String) {}
         override fun onError(utteranceId: String) {}
-        override fun onDone(utteranceId: String) {}
+        override fun onDone(utteranceId: String) {
+            //TODO("Play button getting stuck after completion")
+            /*
+            if(utteranceId.toInt() == (size - 1)){
+                pauseImageButton.visibility = INVISIBLE
+                playImageButton.visibility = VISIBLE
+                playing = false
+            }
+            */
+        }
         override fun onStop(utteranceId: String?, interrupted: Boolean) {
             super.onStop(utteranceId, interrupted)
             if(interrupted){currentSentance = utteranceId!!.toInt()}
@@ -61,10 +71,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val tts_english = TTS(this, "en", "GB", "English")
         languageList.add(tts_english)
         addOtherLanguages()
-        tts_language = tts_english
+        tts = tts_english
         langCode = "en"
-        languageButton.text = tts_language!!.lang
-        tts_language!!.setListener(mProgressListener)
+        languageButton.text = tts!!.lang
+        tts!!.setListener(mProgressListener)
         playImageButton.visibility = VISIBLE
         pauseImageButton.visibility = INVISIBLE
 
@@ -98,8 +108,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Are you sure you want to clear the text?")
             builder.setPositiveButton("Yes") { dialog, which ->
+                if(playing){pause()}
                 textToSay.text.clear()
-                Toast.makeText(this,"Text cleared", Toast.LENGTH_LONG).show()
+                Toast.makeText(this,"Text cleared", Toast.LENGTH_SHORT).show()
             }
 
             builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
@@ -111,19 +122,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             if(playing) {
                 pause()
                 if (speed >= 2.0F) {
-                    Toast.makeText(this, "Already at maximum speed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Already at maximum speed", Toast.LENGTH_SHORT).show()
                 } else {
                     speed += 0.2F
-                    tts_language!!.fastForward(speed)
+                    tts!!.fastForward(speed)
                 }
                 play()
             }
             else{
                 if (speed >= 2.0F) {
-                    Toast.makeText(this, "Already at maximum speed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Already at maximum speed", Toast.LENGTH_SHORT).show()
                 } else {
                     speed += 0.2F
-                    tts_language!!.fastForward(speed)
+                    tts!!.fastForward(speed)
                 }
             }
         }
@@ -132,19 +143,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             if(playing) {
                 pause()
                 if (speed <= 0.2F) {
-                    Toast.makeText(this, "Already at minimum speed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Already at minimum speed", Toast.LENGTH_SHORT).show()
                 } else {
                     speed -= 0.2F
-                    tts_language!!.slowDown(speed)
+                    tts!!.slowDown(speed)
                 }
                 play()
             }
             else{
                 if (speed <= 0.2F) {
-                    Toast.makeText(this, "Already at minimum speed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Already at minimum speed", Toast.LENGTH_SHORT).show()
                 } else {
                     speed -= 0.2F
-                    tts_language!!.slowDown(speed)
+                    tts!!.slowDown(speed)
                 }
             }
         }
@@ -161,13 +172,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             builder.setPositiveButton("Save") { dialog, which ->
                 var title = input.text.toString()
                 var newText: TextObj = TextObj()
+                var exists = false
                 newText.title = title
                 newText.text = textToSay.text.toString()
                 newText.currentSentance = currentSentance
+                newText.tts = tts
+                for(i in 0 until list.size){
+                    if(list.get(i).title.equals(title)){
+                        exists = true
+                        list.removeAt(i)
+                        list.add(i, newText)
+                    }
+                }
+                if(!exists){list.add(newText)}
 
-                list.add(newText)
-
-                Toast.makeText(this,title + " saved", Toast.LENGTH_LONG).show()
+                Toast.makeText(this,title + " saved", Toast.LENGTH_SHORT).show()
             }
 
             builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
@@ -185,7 +204,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 val selected = list[i]
                 textToSay.text.clear()
                 textToSay.text.insert(0,selected.text)
+                currentTitle = selected.title
                 currentSentance = selected.currentSentance
+                tts = selected.tts
+                languageButton.text = tts!!.lang
 
                 dialog.dismiss()
             })
@@ -202,7 +224,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         voiceButton.setOnClickListener{
-            var setOfAvailableVoices = tts_language!!.getVoices()
+            var setOfAvailableVoices = tts!!.getVoices()
             var availableVoices = setOfAvailableVoices!!.toTypedArray()
             var voiceSubSet: ArrayList<Voice> = ArrayList<Voice>()
             for (i in 0 until availableVoices.size) {
@@ -218,7 +240,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 val connectionManager: ConnectionManager = ConnectionManager(this)
                 if(voiceArray[i]!!.toString().contains("Network") && !connectionManager.checkConnection())
                     {Toast.makeText(this, getString(R.string.networkRequired), Toast.LENGTH_SHORT).show()}
-                else { tts_language!!.setVoice(voiceSubSet[i]) }
+                else { tts!!.setVoice(voiceSubSet[i]) }
                 dialog.dismiss()
             })
             builder.show()
@@ -232,9 +254,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             builder.setTitle("Select Language")
             builder.setItems(langArray, DialogInterface.OnClickListener { dialog, i  ->
 
-                tts_language = languageList[i]
-                langCode = setLangCode(tts_language!!)
-                languageButton.text = tts_language!!.lang
+                tts = languageList[i]
+                langCode = setLangCode(tts!!)
+                languageButton.text = tts!!.lang
 
                 dialog.dismiss()
             })
@@ -328,9 +350,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         playImageButton.visibility = INVISIBLE
         pauseImageButton.visibility = VISIBLE
         val textList = textToSay.text.split('.', '?', '!')
-        if(currentSentance >= textList.size || currentSentance < 0){currentSentance = 0}
+        size = textList.size
+        if(currentSentance < 0 || currentSentance >= size){currentSentance = 0}
         for (i in currentSentance until textList.size){
-            tts_language!!.speak(textList.get(i), i.toString())
+            tts!!.speak(textList.get(i), i.toString())
         }
     }
 
@@ -338,7 +361,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         pauseImageButton.visibility = INVISIBLE
         playImageButton.visibility = VISIBLE
         playing = false
-        tts_language!!.stop()
+        tts!!.stop()
     }
 
     private fun playOrPause(){
@@ -347,7 +370,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     public override fun onDestroy() {
-        tts_language!!.destroy()
+        tts!!.destroy()
         super.onDestroy()
     }
 
@@ -372,7 +395,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         return true
     }
-
 
     override fun onSensorChanged(event: SensorEvent?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
