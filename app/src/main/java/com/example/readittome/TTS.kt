@@ -2,6 +2,7 @@ package com.example.readittome
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.speech.tts.Voice.LATENCY_VERY_LOW
 import android.speech.tts.Voice.QUALITY_VERY_HIGH
@@ -36,9 +37,30 @@ class TTS : TextToSpeech.OnInitListener {
         }
     }
 
-    fun speak(value: String) {
-        tts.speak(value, TextToSpeech.QUEUE_FLUSH, null, null)
+    fun speak(value: String, id: String) {
+        tts.speak(value, TextToSpeech.QUEUE_ADD, null, id)
     }
+
+    fun stop(){
+        tts.stop()
+    }
+
+    fun fastForward(speed: Float){
+        tts.setSpeechRate(speed)
+    }
+
+    fun slowDown(speed: Float){
+        tts.setSpeechRate(speed)
+    }
+
+    fun setListener(listener: UtteranceProgressListener){
+        tts.setOnUtteranceProgressListener(listener)
+    }
+
+    fun isSpeaking():Boolean{
+        return tts.isSpeaking()
+    }
+
 
     fun getVoices(): MutableSet<Voice>? {
         return tts.voices

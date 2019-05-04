@@ -12,10 +12,9 @@
             android:layout_height="@android:dimen/thumbnail_height"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" android:id="@+id/textInputLayout">
+            app:layout_constraintTop_toTopOf="parent" android:id="@+id/textInputLayout" android:layout_marginTop="5dp">
 
         <EditText
                 android:id="@+id/textToSay"
@@ -91,32 +90,40 @@
             android:background="@drawable/play_button_round"
             app:layout_constraintBottom_toTopOf="@+id/referenceTopRight"
             app:layout_constraintStart_toEndOf="@+id/skipBackImageButton"
-            app:layout_constraintEnd_toStartOf="@+id/skipForwardImageButton" android:layout_marginStart="8dp"
-            android:layout_marginBottom="0dp" android:layout_marginEnd="0dp"/>
+            app:layout_constraintEnd_toStartOf="@+id/skipForwardImageButton"
+    />
     <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_pause"
             android:id="@+id/pauseImageButton"
             android:background="@drawable/pause_button_round"
-            android:layout_marginTop="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/referenceTopLeft" android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@+id/stopImageButton"
-            app:layout_constraintEnd_toStartOf="@+id/recordImageButton" android:layout_marginEnd="8dp"/>
+            app:layout_constraintStart_toEndOf="@+id/skipBackImageButton"
+            app:layout_constraintEnd_toStartOf="@+id/skipForwardImageButton"
+            app:layout_constraintBottom_toTopOf="@+id/referenceTopLeft"
+            tools:visibility="invisible" android:layout_marginStart="0dp"/>
     <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" app:srcCompat="@drawable/ic_stop"
-            android:id="@+id/stopImageButton"
-            android:background="@drawable/stop_button_round"
+            android:layout_height="wrap_content" app:srcCompat="@drawable/ic_rewind"
+            android:id="@+id/rewindImageButton"
+            android:background="@drawable/speed_button_round"
             app:layout_constraintEnd_toStartOf="@+id/referenceTopLeft"
             android:layout_marginEnd="0dp" app:layout_constraintTop_toBottomOf="@+id/referenceTopLeft"
             android:layout_marginTop="0dp"/>
     <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" app:srcCompat="@drawable/ic_record"
-            android:id="@+id/recordImageButton"
-            android:background="@drawable/record_button_round"
+            android:layout_height="wrap_content" app:srcCompat="@drawable/ic_fast_forward"
+            android:id="@+id/fastForwardImageButton"
+            android:background="@drawable/speed_button_round"
             app:layout_constraintTop_toBottomOf="@+id/referenceTopRight"
             app:layout_constraintStart_toEndOf="@+id/referenceTopRight"/>
+    <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" app:srcCompat="@drawable/ic_clear"
+            android:id="@+id/clearImageButton"
+            android:background="@drawable/clear_button_round"
+            app:layout_constraintStart_toEndOf="@+id/fastForwardImageButton"
+            app:layout_constraintEnd_toStartOf="@+id/rewindImageButton"
+            app:layout_constraintTop_toBottomOf="@+id/referenceTopRight"/>
     <Button
             android:text="@string/button_save"
             android:layout_width="110dp"

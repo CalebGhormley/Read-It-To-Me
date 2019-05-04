@@ -9,7 +9,7 @@
 
     <color name="colorButtonSkip">#223399</color>
     <color name="colorButtonPlay">#229933</color>
-    <color name="colorButtonStop">#992233</color>
-    <color name="colorButtonRecord">#882288</color>
+    <color name="colorButtonClear">#992233</color>
+    <color name="colorButtonSpeed">#882288</color>
     <color name="colorButtonPause">#C7B226</color>
 </resources>
