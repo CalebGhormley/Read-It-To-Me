@@ -266,15 +266,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun setLangCode(tts: TTS): String {
-        if(tts.lang.equals("English")){return "en"}
-        else if(tts.lang.equals("French")){return "fr"}
-        else if(tts.lang.equals("Spanish")){return "es"}
-        else if(tts.lang.equals("German")){return "de"}
-        else if(tts.lang.equals("Russian")){return "ru"}
-        else if(tts.lang.equals("Italian")){return "it"}
-        else if(tts.lang.equals("Chinese")){return "zh"}
-        else if(tts.lang.equals("Japanese")){return "ja"}
-        else{return "en"}
+        when {
+            tts.lang == "English" -> return "en"
+            tts.lang == "French" -> return "fr"
+            tts.lang == "Spanish" -> return "es"
+            tts.lang == "German" -> return "de"
+            tts.lang == "Russian" -> return "ru"
+            tts.lang == "Italian" -> return "it"
+            tts.lang == "Chinese" -> return "zh"
+            tts.lang == "Japanese" -> return "ja"
+            else -> return "en"
+        }
     }
 
     private fun addOtherLanguages(){
@@ -310,22 +312,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         var ruCount: Int = 1; var itCount: Int = 1; var cnCount: Int = 1; var jpCount: Int = 1;
         var twCount: Int = 1;
         for (i in 0 until voiceList.size) {
-            if(voiceList[i].name.toLowerCase().toLowerCase().contains("gb")){ myArray[i] = "Great Britain " + gbCount; gbCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-us-")){ myArray[i] = "United States " + usCount; usCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-au-")){ myArray[i] = "Australia " + auCount; auCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-in-")){ myArray[i] = "India " + inCount; inCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-ca-")){ myArray[i] = "Canada " + caCount; caCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-fr-")){ myArray[i] = "France " + frCount; frCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-es-")){ myArray[i] = "Mexico " + esCount; esCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-de-")){ myArray[i] = "Germany " + deCount; deCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-ru-")){ myArray[i] = "Russia " + ruCount; ruCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-it-")){ myArray[i] = "Italy " + itCount; itCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-cn-")){ myArray[i] = "China " + cnCount; cnCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-tw-")){ myArray[i] = "Taiwan " + twCount; twCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-jp-")){ myArray[i] = "Japan " + jpCount; jpCount++; }
-            else{
-                myArray[i] = voiceList[i].name.toString()
-                found = false
+            when {
+                voiceList[i].name.toLowerCase().toLowerCase().contains("gb") -> { myArray[i] = "Great Britain " + gbCount; gbCount++; }
+                voiceList[i].name.toLowerCase().contains("-us-") -> { myArray[i] = "United States " + usCount; usCount++; }
+                voiceList[i].name.toLowerCase().contains("-au-") -> { myArray[i] = "Australia " + auCount; auCount++; }
+                voiceList[i].name.toLowerCase().contains("-in-") -> { myArray[i] = "India " + inCount; inCount++; }
+                voiceList[i].name.toLowerCase().contains("-ca-") -> { myArray[i] = "Canada " + caCount; caCount++; }
+                voiceList[i].name.toLowerCase().contains("-fr-") -> { myArray[i] = "France " + frCount; frCount++; }
+                voiceList[i].name.toLowerCase().contains("-es-") -> { myArray[i] = "Mexico " + esCount; esCount++; }
+                voiceList[i].name.toLowerCase().contains("-de-") -> { myArray[i] = "Germany " + deCount; deCount++; }
+                voiceList[i].name.toLowerCase().contains("-ru-") -> { myArray[i] = "Russia " + ruCount; ruCount++; }
+                voiceList[i].name.toLowerCase().contains("-it-") -> { myArray[i] = "Italy " + itCount; itCount++; }
+                voiceList[i].name.toLowerCase().contains("-cn-") -> { myArray[i] = "China " + cnCount; cnCount++; }
+                voiceList[i].name.toLowerCase().contains("-tw-") -> { myArray[i] = "Taiwan " + twCount; twCount++; }
+                voiceList[i].name.toLowerCase().contains("-jp-") -> { myArray[i] = "Japan " + jpCount; jpCount++; }
+                else -> {
+                    myArray[i] = voiceList[i].name.toString()
+                    found = false
+                }
             }
             if(found){
                 if(voiceList[i].name.toLowerCase().contains("female")){ myArray[i] = myArray[i].toString() + ", Female" }
