@@ -2,8 +2,8 @@
     <string name="app_name">Read It To Me</string>
     <string name="button_save">Save</string>
     <string name="button_load">Load</string>
-    <string name="button_send">Send</string>
-    <string name="button_recieve">Recieve</string>
+    <string name="button_import">Import</string>
+    <string name="button_export">Export</string>
     <string name="button_voice">Voice</string>
     <string name="button_language">Language</string>
 
