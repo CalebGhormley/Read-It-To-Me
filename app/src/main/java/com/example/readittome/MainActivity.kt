@@ -48,18 +48,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var languageList: ArrayList<TTS> = ArrayList()
     private var list: ArrayList<TextObj> = ArrayList()
     private var langCode: String = ""
-    private var currentSentance: Int = 0
+    private var currentSentence: Int = 0
     private var currentTitle: String = ""
     private var playing: Boolean = false
     private var speed: Float = 1.0F
     private var size = 0
-    private var accelerometerX: Float = 0F
-    private var accelerometerY: Float = 0F
-    private var accelerometerZ: Float = 0F
-    private var previousAccelerometerX: Float = 0F
-    private var previousAccelerometerY: Float = 0F
-    private var previousAccelerometerZ: Float = 0F
-    private var timeSinceLastSensorEvent: Float = 0F
+    private var timeSinceLastSensorEvent: Long = 0L
+    private val shakeThreshold: Float = 3.25F
     private val READ_REQUEST_CODE: Int = 42
     private val WRITE_REQUEST_CODE: Int = 43
     private val mProgressListener = object : UtteranceProgressListener() {
@@ -77,7 +72,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         override fun onStop(utteranceId: String?, interrupted: Boolean) {
             super.onStop(utteranceId, interrupted)
-            if(interrupted){currentSentance = utteranceId!!.toInt()}
+            if(interrupted){currentSentence = utteranceId!!.toInt()}
         }
     }
 
@@ -97,8 +92,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        //sensorManager.unregisterListener(this, accelerometer)
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI)
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
 
         playImageButton.setOnClickListener{
             if(!playing) {play()}
@@ -107,19 +101,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         skipBackImageButton.setOnClickListener{
             if(playing){
                 pause()
-                currentSentance -= 1
+                currentSentence -= 1
                 play()
             }
-            else{currentSentance -= 1}
+            else{currentSentence -= 1}
         }
 
         skipForwardImageButton.setOnClickListener{
             if(playing){
                 pause()
-                currentSentance += 1
+                currentSentence += 1
                 play()
             }
-            else{currentSentance += 1}
+            else{currentSentence += 1}
         }
 
         pauseImageButton.setOnClickListener{
@@ -197,7 +191,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 var exists = false
                 newText.title = title
                 newText.text = textToSay.text.toString()
-                newText.currentSentance = currentSentance
+                newText.currentSentance = currentSentence
                 newText.tts = tts
                 for(i in 0 until list.size){
                     if(list.get(i).title.equals(title)){
@@ -227,7 +221,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 textToSay.text.clear()
                 textToSay.text.insert(0,selected.text)
                 currentTitle = selected.title
-                currentSentance = selected.currentSentance
+                currentSentence = selected.currentSentance
                 tts = selected.tts
                 languageButton.text = tts!!.lang
 
@@ -377,8 +371,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         pauseImageButton.visibility = VISIBLE
         val textList = textToSay.text.split('.', '?', '!')
         size = textList.size
-        if(currentSentance < 0 || currentSentance >= size){currentSentance = 0}
-        for (i in currentSentance until textList.size){
+        if(currentSentence < 0 || currentSentence >= size){currentSentence = 0}
+        for (i in currentSentence until textList.size){
             tts!!.speak(textList.get(i), i.toString())
         }
     }
@@ -424,21 +418,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event!!.sensor.type == Sensor.TYPE_ACCELEROMETER) {
-            accelerometerX = event.values[0]
-            accelerometerY = event.values[1]
-            accelerometerZ = event.values[2]
-            val currentTime: Float = System.currentTimeMillis().toFloat()
-            val timeDifference: Float = (currentTime - timeSinceLastSensorEvent)
-            // Limiting updates to 1 per 100ms
-            if(timeDifference > 100){
-                timeSinceLastSensorEvent = currentTime
-                val shakeThreshold = 800
-                val shakeSpeed: Float = Math.abs(accelerometerX + accelerometerY + accelerometerZ - previousAccelerometerX - previousAccelerometerY - previousAccelerometerZ)
-                if(shakeSpeed > shakeThreshold) {
+            val currentTime = System.currentTimeMillis()
+            if(currentTime - timeSinceLastSensorEvent > 1000){
+                val accelerometerX = event.values[0].toDouble()
+                val accelerometerY = event.values[1].toDouble()
+                val accelerometerZ = event.values[2].toDouble()
+                val acceleration = Math.sqrt(Math.pow(accelerometerX, 2.0) +
+                                                    Math.pow(accelerometerY, 2.0) +
+                                                    Math.pow(accelerometerZ, 2.0)) -
+                                                    SensorManager.GRAVITY_EARTH
+                if(acceleration > shakeThreshold){
+                    timeSinceLastSensorEvent = currentTime
                     playOrPause()
-                    previousAccelerometerX = accelerometerX
-                    previousAccelerometerY = accelerometerY
-                    previousAccelerometerZ = accelerometerZ
                 }
             }
         }
