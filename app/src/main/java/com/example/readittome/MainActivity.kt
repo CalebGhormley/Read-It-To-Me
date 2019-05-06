@@ -6,30 +6,26 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.database.Cursor
-import android.graphics.drawable.Icon
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.AudioManager
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.net.Uri
 import android.net.wifi.p2p.WifiP2pManager
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.OpenableColumns
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.text.InputType
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.EditText
 import android.widget.Toast
-import com.example.readittome.R.drawable.ic_pause
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import kotlinx.android.synthetic.main.activity_main.*
@@ -37,7 +33,6 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.net.URI
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -58,6 +53,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var playing: Boolean = false
     private var speed: Float = 1.0F
     private var size = 0
+    private var accelerometerX: Float = 0F
+    private var accelerometerY: Float = 0F
+    private var accelerometerZ: Float = 0F
+    private var previousAccelerometerX: Float = 0F
+    private var previousAccelerometerY: Float = 0F
+    private var previousAccelerometerZ: Float = 0F
+    private var timeSinceLastSensorEvent: Float = 0F
     private val READ_REQUEST_CODE: Int = 42
     private val WRITE_REQUEST_CODE: Int = 43
     private val mProgressListener = object : UtteranceProgressListener() {
@@ -92,6 +94,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         tts!!.setListener(mProgressListener)
         playImageButton.visibility = VISIBLE
         pauseImageButton.visibility = INVISIBLE
+
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        //sensorManager.unregisterListener(this, accelerometer)
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI)
 
         playImageButton.setOnClickListener{
             if(!playing) {play()}
@@ -416,12 +423,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (event!!.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+            accelerometerX = event.values[0]
+            accelerometerY = event.values[1]
+            accelerometerZ = event.values[2]
+            val currentTime: Float = System.currentTimeMillis().toFloat()
+            val timeDifference: Float = (currentTime - timeSinceLastSensorEvent)
+            // Limiting updates to 1 per 100ms
+            if(timeDifference > 100){
+                timeSinceLastSensorEvent = currentTime
+                val shakeThreshold = 800
+                val shakeSpeed: Float = Math.abs(accelerometerX + accelerometerY + accelerometerZ - previousAccelerometerX - previousAccelerometerY - previousAccelerometerZ)
+                if(shakeSpeed > shakeThreshold) {
+                    playOrPause()
+                    previousAccelerometerX = accelerometerX
+                    previousAccelerometerY = accelerometerY
+                    previousAccelerometerZ = accelerometerZ
+                }
+            }
+        }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     /**
      * Fires an intent to spin up the "file chooser" UI and select an image.
