@@ -133,12 +133,12 @@
             android:id="@+id/saveButton" app:layout_constraintEnd_toStartOf="@+id/referenceBottomLeft"
             app:layout_constraintBottom_toTopOf="@+id/referenceBottomLeft"/>
     <Button
-            android:text="@string/button_send"
+            android:text="@string/button_export"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/sendButton"
+            android:id="@+id/exportButton"
             app:layout_constraintBottom_toTopOf="@+id/referenceBottomLeft"
             app:layout_constraintStart_toEndOf="@+id/saveButton"
             app:layout_constraintEnd_toStartOf="@+id/voiceButton"/>
@@ -161,12 +161,12 @@
             app:layout_constraintStart_toEndOf="@+id/referenceBottomRight"
             app:layout_constraintBottom_toTopOf="@+id/referenceBottomRight"/>
     <Button
-            android:text="@string/button_recieve"
+            android:text="@string/button_import"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/recieveButton"
+            android:id="@+id/importButton"
             app:layout_constraintTop_toBottomOf="@+id/referenceBottomLeft"
             app:layout_constraintEnd_toStartOf="@+id/languageButton"
             app:layout_constraintStart_toEndOf="@+id/loadButton"/>
