@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var speed: Float = 1.0F
     private var size = 0
     private var timeSinceLastSensorEvent: Long = 0L
-    private val shakeThreshold: Float = 3.25F
+    private val shakeThreshold: Float = 5F  // Adjust this value to fine tune the sensitivity of shakes
     private val READ_REQUEST_CODE: Int = 42
     private val WRITE_REQUEST_CODE: Int = 43
     private val mProgressListener = object : UtteranceProgressListener() {
