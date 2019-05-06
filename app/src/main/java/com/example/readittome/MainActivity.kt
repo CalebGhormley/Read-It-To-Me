@@ -6,30 +6,26 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.database.Cursor
-import android.graphics.drawable.Icon
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.AudioManager
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.net.Uri
 import android.net.wifi.p2p.WifiP2pManager
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.OpenableColumns
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.text.InputType
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.EditText
 import android.widget.Toast
-import com.example.readittome.R.drawable.ic_pause
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import kotlinx.android.synthetic.main.activity_main.*
@@ -37,7 +33,6 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.net.URI
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -53,11 +48,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var languageList: ArrayList<TTS> = ArrayList()
     private var list: ArrayList<TextObj> = ArrayList()
     private var langCode: String = ""
-    private var currentSentance: Int = 0
+    private var currentSentence: Int = 0
     private var currentTitle: String = ""
     private var playing: Boolean = false
     private var speed: Float = 1.0F
     private var size = 0
+    private var timeSinceLastSensorEvent: Long = 0L
+    private val shakeThreshold: Float = 5F  // Adjust this value to fine tune the sensitivity of shakes
     private val READ_REQUEST_CODE: Int = 42
     private val WRITE_REQUEST_CODE: Int = 43
     private val mProgressListener = object : UtteranceProgressListener() {
@@ -75,7 +72,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         override fun onStop(utteranceId: String?, interrupted: Boolean) {
             super.onStop(utteranceId, interrupted)
-            if(interrupted){currentSentance = utteranceId!!.toInt()}
+            if(interrupted){currentSentence = utteranceId!!.toInt()}
         }
     }
 
@@ -93,6 +90,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         playImageButton.visibility = VISIBLE
         pauseImageButton.visibility = INVISIBLE
 
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+
         playImageButton.setOnClickListener{
             if(!playing) {play()}
         }
@@ -100,19 +101,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         skipBackImageButton.setOnClickListener{
             if(playing){
                 pause()
-                currentSentance -= 1
+                currentSentence -= 1
                 play()
             }
-            else{currentSentance -= 1}
+            else{currentSentence -= 1}
         }
 
         skipForwardImageButton.setOnClickListener{
             if(playing){
                 pause()
-                currentSentance += 1
+                currentSentence += 1
                 play()
             }
-            else{currentSentance += 1}
+            else{currentSentence += 1}
         }
 
         pauseImageButton.setOnClickListener{
@@ -185,12 +186,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             builder.setView(input)
 
             builder.setPositiveButton("Save") { dialog, which ->
-                var title = input.text.toString()
-                var newText: TextObj = TextObj()
+                val title = input.text.toString()
+                val newText: TextObj = TextObj()
                 var exists = false
                 newText.title = title
                 newText.text = textToSay.text.toString()
-                newText.currentSentance = currentSentance
+                newText.currentSentance = currentSentence
                 newText.tts = tts
                 for(i in 0 until list.size){
                     if(list.get(i).title.equals(title)){
@@ -210,7 +211,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         loadButton.setOnClickListener{
-            var textArray = listToCharSeq(list)
+            val textArray = listToCharSeq(list)
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select Text")
@@ -220,7 +221,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 textToSay.text.clear()
                 textToSay.text.insert(0,selected.text)
                 currentTitle = selected.title
-                currentSentance = selected.currentSentance
+                currentSentence = selected.currentSentance
                 tts = selected.tts
                 languageButton.text = tts!!.lang
 
@@ -239,16 +240,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         voiceButton.setOnClickListener{
-            var setOfAvailableVoices = tts!!.getVoices()
-            var availableVoices = setOfAvailableVoices!!.toTypedArray()
-            var voiceSubSet: ArrayList<Voice> = ArrayList<Voice>()
+            val setOfAvailableVoices = tts!!.getVoices()
+            val availableVoices = setOfAvailableVoices!!.toTypedArray()
+            val voiceSubSet: ArrayList<Voice> = ArrayList<Voice>()
             for (i in 0 until availableVoices.size) {
                 if(availableVoices[i].locale.toString().contains(langCode)) {
                     voiceSubSet.add(availableVoices[i])
                 }
             }
             Collections.sort(voiceSubSet, VoiceComparator());
-            var voiceArray: Array<CharSequence?>  = voiceListToCharSeq(voiceSubSet)
+            val voiceArray: Array<CharSequence?>  = voiceListToCharSeq(voiceSubSet)
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select Voice")
             builder.setItems(voiceArray, DialogInterface.OnClickListener { dialog, i  ->
@@ -263,7 +264,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         languageButton.setOnClickListener{
-            var langArray: Array<CharSequence?>  = languageListToCharSeq(languageList)
+            val langArray: Array<CharSequence?>  = languageListToCharSeq(languageList)
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select Language")
@@ -281,15 +282,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun setLangCode(tts: TTS): String {
-        if(tts.lang.equals("English")){return "en"}
-        else if(tts.lang.equals("French")){return "fr"}
-        else if(tts.lang.equals("Spanish")){return "es"}
-        else if(tts.lang.equals("German")){return "de"}
-        else if(tts.lang.equals("Russian")){return "ru"}
-        else if(tts.lang.equals("Italian")){return "it"}
-        else if(tts.lang.equals("Chinese")){return "zh"}
-        else if(tts.lang.equals("Japanese")){return "ja"}
-        else{return "en"}
+        return when {
+            tts.lang == "English" -> "en"
+            tts.lang == "French" -> "fr"
+            tts.lang == "Spanish" -> "es"
+            tts.lang == "German" -> "de"
+            tts.lang == "Russian" -> "ru"
+            tts.lang == "Italian" -> "it"
+            tts.lang == "Chinese" -> "zh"
+            tts.lang == "Japanese" -> "ja"
+            else -> "en"
+        }
     }
 
     private fun addOtherLanguages(){
@@ -325,22 +328,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         var ruCount: Int = 1; var itCount: Int = 1; var cnCount: Int = 1; var jpCount: Int = 1;
         var twCount: Int = 1;
         for (i in 0 until voiceList.size) {
-            if(voiceList[i].name.toLowerCase().toLowerCase().contains("gb")){ myArray[i] = "Great Britain " + gbCount; gbCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-us-")){ myArray[i] = "United States " + usCount; usCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-au-")){ myArray[i] = "Australia " + auCount; auCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-in-")){ myArray[i] = "India " + inCount; inCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-ca-")){ myArray[i] = "Canada " + caCount; caCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-fr-")){ myArray[i] = "France " + frCount; frCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-es-")){ myArray[i] = "Mexico " + esCount; esCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-de-")){ myArray[i] = "Germany " + deCount; deCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-ru-")){ myArray[i] = "Russia " + ruCount; ruCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-it-")){ myArray[i] = "Italy " + itCount; itCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-cn-")){ myArray[i] = "China " + cnCount; cnCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-tw-")){ myArray[i] = "Taiwan " + twCount; twCount++; }
-            else if(voiceList[i].name.toLowerCase().contains("-jp-")){ myArray[i] = "Japan " + jpCount; jpCount++; }
-            else{
-                myArray[i] = voiceList[i].name.toString()
-                found = false
+            when {
+                voiceList[i].name.toLowerCase().contains("gb") -> { myArray[i] = "Great Britain " + gbCount; gbCount++; }
+                voiceList[i].name.toLowerCase().contains("-us-") -> { myArray[i] = "United States " + usCount; usCount++; }
+                voiceList[i].name.toLowerCase().contains("-au-") -> { myArray[i] = "Australia " + auCount; auCount++; }
+                voiceList[i].name.toLowerCase().contains("-in-") -> { myArray[i] = "India " + inCount; inCount++; }
+                voiceList[i].name.toLowerCase().contains("-ca-") -> { myArray[i] = "Canada " + caCount; caCount++; }
+                voiceList[i].name.toLowerCase().contains("-fr-") -> { myArray[i] = "France " + frCount; frCount++; }
+                voiceList[i].name.toLowerCase().contains("-es-") -> { myArray[i] = "Mexico " + esCount; esCount++; }
+                voiceList[i].name.toLowerCase().contains("-de-") -> { myArray[i] = "Germany " + deCount; deCount++; }
+                voiceList[i].name.toLowerCase().contains("-ru-") -> { myArray[i] = "Russia " + ruCount; ruCount++; }
+                voiceList[i].name.toLowerCase().contains("-it-") -> { myArray[i] = "Italy " + itCount; itCount++; }
+                voiceList[i].name.toLowerCase().contains("-cn-") -> { myArray[i] = "China " + cnCount; cnCount++; }
+                voiceList[i].name.toLowerCase().contains("-tw-") -> { myArray[i] = "Taiwan " + twCount; twCount++; }
+                voiceList[i].name.toLowerCase().contains("-jp-") -> { myArray[i] = "Japan " + jpCount; jpCount++; }
+                else -> {
+                    myArray[i] = voiceList[i].name.toString()
+                    found = false
+                }
             }
             if(found){
                 if(voiceList[i].name.toLowerCase().contains("female")){ myArray[i] = myArray[i].toString() + ", Female" }
@@ -366,8 +371,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         pauseImageButton.visibility = VISIBLE
         val textList = textToSay.text.split('.', '?', '!')
         size = textList.size
-        if(currentSentance < 0 || currentSentance >= size){currentSentance = 0}
-        for (i in currentSentance until textList.size){
+        if(currentSentence < 0 || currentSentence >= size){currentSentence = 0}
+        for (i in currentSentence until textList.size){
             tts!!.speak(textList.get(i), i.toString())
         }
     }
@@ -412,12 +417,25 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (event!!.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+            val currentTime = System.currentTimeMillis()
+            if(currentTime - timeSinceLastSensorEvent > 1000){
+                val accelerometerX = event.values[0].toDouble()
+                val accelerometerY = event.values[1].toDouble()
+                val accelerometerZ = event.values[2].toDouble()
+                val acceleration = Math.sqrt(Math.pow(accelerometerX, 2.0) +
+                                                    Math.pow(accelerometerY, 2.0) +
+                                                    Math.pow(accelerometerZ, 2.0)) -
+                                                    SensorManager.GRAVITY_EARTH
+                if(acceleration > shakeThreshold){
+                    timeSinceLastSensorEvent = currentTime
+                    playOrPause()
+                }
+            }
+        }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     /**
      * Fires an intent to spin up the "file chooser" UI and select an image.
