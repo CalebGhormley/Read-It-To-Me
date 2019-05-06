@@ -170,8 +170,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             builder.setView(input)
 
             builder.setPositiveButton("Save") { dialog, which ->
-                var title = input.text.toString()
-                var newText: TextObj = TextObj()
+                val title = input.text.toString()
+                val newText: TextObj = TextObj()
                 var exists = false
                 newText.title = title
                 newText.text = textToSay.text.toString()
@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         loadButton.setOnClickListener{
-            var textArray = listToCharSeq(list)
+            val textArray = listToCharSeq(list)
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select Text")
@@ -224,16 +224,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         voiceButton.setOnClickListener{
-            var setOfAvailableVoices = tts!!.getVoices()
-            var availableVoices = setOfAvailableVoices!!.toTypedArray()
-            var voiceSubSet: ArrayList<Voice> = ArrayList<Voice>()
+            val setOfAvailableVoices = tts!!.getVoices()
+            val availableVoices = setOfAvailableVoices!!.toTypedArray()
+            val voiceSubSet: ArrayList<Voice> = ArrayList<Voice>()
             for (i in 0 until availableVoices.size) {
                 if(availableVoices[i].locale.toString().contains(langCode)) {
                     voiceSubSet.add(availableVoices[i])
                 }
             }
             Collections.sort(voiceSubSet, VoiceComparator());
-            var voiceArray: Array<CharSequence?>  = voiceListToCharSeq(voiceSubSet)
+            val voiceArray: Array<CharSequence?>  = voiceListToCharSeq(voiceSubSet)
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select Voice")
             builder.setItems(voiceArray, DialogInterface.OnClickListener { dialog, i  ->
@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         languageButton.setOnClickListener{
-            var langArray: Array<CharSequence?>  = languageListToCharSeq(languageList)
+            val langArray: Array<CharSequence?>  = languageListToCharSeq(languageList)
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Select Language")
@@ -266,16 +266,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun setLangCode(tts: TTS): String {
-        when {
-            tts.lang == "English" -> return "en"
-            tts.lang == "French" -> return "fr"
-            tts.lang == "Spanish" -> return "es"
-            tts.lang == "German" -> return "de"
-            tts.lang == "Russian" -> return "ru"
-            tts.lang == "Italian" -> return "it"
-            tts.lang == "Chinese" -> return "zh"
-            tts.lang == "Japanese" -> return "ja"
-            else -> return "en"
+        return when {
+            tts.lang == "English" -> "en"
+            tts.lang == "French" -> "fr"
+            tts.lang == "Spanish" -> "es"
+            tts.lang == "German" -> "de"
+            tts.lang == "Russian" -> "ru"
+            tts.lang == "Italian" -> "it"
+            tts.lang == "Chinese" -> "zh"
+            tts.lang == "Japanese" -> "ja"
+            else -> "en"
         }
     }
 
@@ -313,7 +313,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         var twCount: Int = 1;
         for (i in 0 until voiceList.size) {
             when {
-                voiceList[i].name.toLowerCase().toLowerCase().contains("gb") -> { myArray[i] = "Great Britain " + gbCount; gbCount++; }
+                voiceList[i].name.toLowerCase().contains("gb") -> { myArray[i] = "Great Britain " + gbCount; gbCount++; }
                 voiceList[i].name.toLowerCase().contains("-us-") -> { myArray[i] = "United States " + usCount; usCount++; }
                 voiceList[i].name.toLowerCase().contains("-au-") -> { myArray[i] = "Australia " + auCount; auCount++; }
                 voiceList[i].name.toLowerCase().contains("-in-") -> { myArray[i] = "India " + inCount; inCount++; }
