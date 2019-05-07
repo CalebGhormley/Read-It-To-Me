@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var speed: Float = 1.0F
     private var size = 0
     private var timeSinceLastSensorEvent: Long = 0L
-    private val shakeThreshold: Float = 5F  // Adjust this value to fine tune the sensitivity of shakes
+    private val shakeThreshold: Float = 5F  // Adjust this value to fine tune the sensitivity of shakes, lower = more sensitive, higher = less sensitive
     private val READ_REQUEST_CODE: Int = 42
     private val WRITE_REQUEST_CODE: Int = 43
     private val mProgressListener = object : UtteranceProgressListener() {
@@ -90,9 +90,18 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         playImageButton.visibility = VISIBLE
         pauseImageButton.visibility = INVISIBLE
 
-        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+//        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+//        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+//        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+
+        shakeToggleButton.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked) {
+                val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+                val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+                sensorManager.unregisterListener(this, accelerometer)
+                sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+            }
+        }
 
         playImageButton.setOnClickListener{
             if(!playing) {play()}
@@ -231,7 +240,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             true
         }
 
-        exportButton.setOnClickListener{
+        shakeToggleButton.setOnClickListener{
 
         }
 
