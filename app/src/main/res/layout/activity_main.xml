@@ -132,13 +132,14 @@
             android:background="@color/colorTextButton"
             android:id="@+id/saveButton" app:layout_constraintEnd_toStartOf="@+id/referenceBottomLeft"
             app:layout_constraintBottom_toTopOf="@+id/referenceBottomLeft"/>
-    <Button
-            android:text="@string/button_export"
+    <ToggleButton
+            android:textOn="@string/button_toggle_shake"
+            android:textOff="@string/button_toggle_shake"
             android:layout_width="110dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:background="@color/colorTextButton"
-            android:id="@+id/exportButton"
+            android:id="@+id/shakeToggleButton"
             app:layout_constraintBottom_toTopOf="@+id/referenceBottomLeft"
             app:layout_constraintStart_toEndOf="@+id/saveButton"
             app:layout_constraintEnd_toStartOf="@+id/voiceButton"/>
